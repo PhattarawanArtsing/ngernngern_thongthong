@@ -62,7 +62,7 @@ export class D1TransactionRepository implements TransactionRepository {
   async create(input: CreateTransactionInput): Promise<Transaction> {
     const id = crypto.randomUUID()
     const now = new Date().toISOString()
-    const date = input.date ?? now.split('T')[0]
+    const date = (input.date ?? now.split('T')[0] ?? "")
     await this.db
       .prepare('INSERT INTO transactions (id, type, amount, description, category, date, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)')
       .bind(id, input.type, input.amount, input.description, input.category, date, now, now)

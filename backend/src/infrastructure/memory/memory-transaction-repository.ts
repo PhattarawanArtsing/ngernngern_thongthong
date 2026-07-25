@@ -24,13 +24,14 @@ export class MemoryTransactionRepository implements TransactionRepository {
 
   async create(input: CreateTransactionInput): Promise<Transaction> {
     const now = new Date().toISOString()
+    const date = (input.date ?? now.split('T')[0] ?? "")
     const transaction: Transaction = {
       id: crypto.randomUUID(),
       type: input.type,
       amount: input.amount,
       description: input.description,
       category: input.category,
-      date: input.date ?? now.split('T')[0],
+      date,
       createdAt: now,
       updatedAt: now,
     }
@@ -39,19 +40,20 @@ export class MemoryTransactionRepository implements TransactionRepository {
   }
 
   async update(id: string, input: UpdateTransactionInput): Promise<Transaction | null> {
-    const idx = this.transactions.findIndex((t) => t.id === id)
-    if (idx === -1) return null
+    const existing = await this.findById(id)
+    if (!existing) return null
 
-    const existing = this.transactions[idx]
+    const date: string = input.date ?? existing.date
     const updated: Transaction = {
       ...existing,
       type: input.type ?? existing.type,
       amount: input.amount ?? existing.amount,
       description: input.description ?? existing.description,
       category: input.category ?? existing.category,
-      date: input.date ?? existing.date,
+      date,
       updatedAt: new Date().toISOString(),
     }
+    const idx = this.transactions.findIndex((t) => t.id === id)
     this.transactions[idx] = updated
     return updated
   }
