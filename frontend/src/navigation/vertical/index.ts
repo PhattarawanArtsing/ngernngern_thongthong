@@ -8,6 +8,11 @@ export default [
     icon: { icon: 'ri-home-line' },
   },
   {
+    title: 'Transactions',
+    to: { name: 'transaction-page' },
+    icon: { icon: 'ri-exchange-dollar-line' },
+  },
+  {
     heading: 'Admin',
   },
   {
